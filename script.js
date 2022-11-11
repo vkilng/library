@@ -10,6 +10,11 @@ function Book(title, author, numOfPages, readingStatus) {
     this.readingStatus = readingStatus;
 }
 
+Book.prototype.toggleReadingStatus = function() {
+    //console.log(this.readingStatus);
+    this.readingStatus = !(this.readingStatus);
+};
+
 let bookOne = new Book('Mother of Learning','Domagoj Kurmaic',1932,true);
 let bookTwo = new Book('Lord of Mysteries','Cuttlefish',1430,true);
 myLibrary.push(bookOne);
@@ -45,27 +50,29 @@ function displayList() {
         var newRow = document.createElement('tr');
         tableElement.append(newRow);
         for (var prop in book) {
-            var dataNode = document.createElement('td');
-            if (prop === 'readingStatus') {
-                var labelNode = document.createElement('label');
-                labelNode.setAttribute('class','switch');
-                dataNode.append(labelNode);
-                var checkInputNode = document.createElement('input');
-                checkInputNode.setAttribute('type','checkbox');
-                checkInputNode.setAttribute('name','readingStatus');
-                checkInputNode.setAttribute('data-bookindex',myLibrary.indexOf(book));
-                if (book[prop]) {
-                    checkInputNode.checked = true;
+            if (book.hasOwnProperty(prop)) {
+                var dataNode = document.createElement('td');
+                if (prop === 'readingStatus') {
+                    var labelNode = document.createElement('label');
+                    labelNode.setAttribute('class','switch');
+                    dataNode.append(labelNode);
+                    var checkInputNode = document.createElement('input');
+                    checkInputNode.setAttribute('type','checkbox');
+                    checkInputNode.setAttribute('name','readingStatus');
+                    checkInputNode.setAttribute('data-bookindex',myLibrary.indexOf(book));
+                    if (book[prop]) {
+                        checkInputNode.checked = true;
+                    }
+                    insertReadingStatusTogglingFunction(checkInputNode);
+                    labelNode.append(checkInputNode);
+                    var spanNode = document.createElement('span');
+                    spanNode.setAttribute('class','slider round');
+                    labelNode.append(spanNode);
+                } else {
+                    dataNode.textContent = book[prop].toLocaleString('en-us');
                 }
-                insertReadingStatusTogglingFunction(checkInputNode);
-                labelNode.append(checkInputNode);
-                var spanNode = document.createElement('span');
-                spanNode.setAttribute('class','slider round');
-                labelNode.append(spanNode);
-            } else {
-                dataNode.textContent = book[prop].toLocaleString('en-us');
+                newRow.append(dataNode);
             }
-            newRow.append(dataNode);
         }
         var delDataNode = document.createElement('td');
         var delIconNode = document.createElement('i');
@@ -82,8 +89,8 @@ function displayList() {
 function insertReadingStatusTogglingFunction(inputElement) {
     inputElement.addEventListener('click',() => {
         var indexOfBookInArray = inputElement.dataset.bookindex;
-        var bookofIndex = myLibrary[indexOfBookInArray];
-        bookofIndex.readingStatus = !(bookofIndex.readingStatus);
+        var bookOfIndex = myLibrary[indexOfBookInArray];
+        bookOfIndex.toggleReadingStatus();
         //console.log(myLibrary);
         return; 
     })
